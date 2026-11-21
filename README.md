@@ -2,8 +2,9 @@
 
 Giao diện tiếng Việt: sinh hiệu, môi trường phòng và giường bệnh. Node 3 đã thay chức năng té ngã bằng góc nâng đầu giường, dấu hiệu co giật/kích động và nhắc xoay trở chống loét tỳ đè.
 
+Đã kiểm tra trên dự án Supabase của nhóm: đăng ký/đăng nhập, tạo nhóm, lưu và đọc lại ba bản ghi mô phỏng cho Node 1, Node 2, Node 3. Các bản ghi này có nguồn `demo`. Bước tiếp theo là ghép và kiểm thử dữ liệu từ mạch thật cùng lệnh điều khiển hai chiều.
 
-## Mới: lưu kết quả lên Supabase
+## Lưu kết quả lên Supabase
 
 Đọc **HUONG_DAN_SUPABASE.md** để ghép dự án của nhóm. Mở mục **Máy chủ Supabase** trên web để cấu hình URL/khóa, đăng ký/đăng nhập, tạo nhóm, phân quyền và đọc lịch sử.
 
@@ -13,27 +14,45 @@ Giao diện tiếng Việt: sinh hiệu, môi trường phòng và giường b�
 - Có hàng chờ, xác nhận từ máy chủ, chống gửi lại trùng ID, lịch sử theo nhóm và xuất CSV.
 - Giao diện chạy không cần npm; thư viện Supabase JS đã có trong `dist/vendor`.
 
-Bộ mã chưa chứa URL/khóa hoặc tài khoản của dự án Supabase thật. Chỉ nhập publishable/anon key trên web. Chạy SQL và đăng nhập thành công mới được coi là đã kết nối. Chọn một nơi ghi cho mỗi luồng đo: web hoặc Gateway.
+Bản này đã điền sẵn Project URL và khóa publishable công khai của nhóm trong `dist/supabase-config.js`. Mỗi thành viên đăng ký tài khoản ứng dụng CareLink riêng và được thêm quyền vào cùng nhóm để đọc/ghi kết quả. Tài khoản ứng dụng được tạo riêng với tài khoản quản trị Supabase. Chọn một nơi ghi cho mỗi luồng đo: web hoặc Gateway.
+
+Khi dùng dự án Supabase khác, thay cấu hình và chạy `supabase/schema.sql` trong dự án mới theo hướng dẫn. Cấu hình đã lưu trong trình duyệt được ưu tiên hơn file; có thể cập nhật lại tại mục **Máy chủ Supabase**. Chỉ đặt Project URL và khóa publishable/anon trong mã giao diện; mật khẩu và khóa secret/service_role được giữ riêng.
 
 ## 1. Mở trong VS Code, chạy ngay khi chưa có mạch
 
 Cài Python 3.10 trở lên. Giải nén toàn bộ ZIP, chọn **File → Open Folder** trong VS Code, mở thư mục chứa README này. Chọn **Terminal → New Terminal**, chạy trên Windows:
 
 ```powershell
-py -3 -m http.server 8000 --directory dist
+py -3 -m http.server 8001 --directory dist
 ```
 
 Trên Linux/macOS:
 
 ```bash
-python3 -m http.server 8000 --directory dist
+python3 -m http.server 8001 --directory dist
 ```
 
-Mở **http://localhost:8000** bằng trình duyệt. Giữ Terminal đang chạy; Ctrl+C để dừng. Không cần npm/Node.js để mở giao diện.
+Mở **http://localhost:8001** bằng trình duyệt. Giữ Terminal đang chạy; Ctrl+C để dừng. Không cần npm/Node.js để mở giao diện.
+
+Thư mục đang mở trong VS Code cần chứa trực tiếp `dist`, `gateway`, `supabase` và README này. Nếu giải nén thành hai thư mục lồng nhau, mở thư mục bên trong có các mục trên rồi chạy lệnh. Khi gặp lỗi 404 ở trang chủ, kiểm tra vị trí của `dist/index.html` so với thư mục đang chạy Terminal.
 
 Dashboard khởi động ở **Mô phỏng**, có nhãn rõ trên giao diện. Vào **Giường bệnh**, kéo thanh góc và thử các nút kích động, nghi co giật, đến giờ xoay trở, đã xoay trở, bật/tắt còi. Vào **Cảnh báo** để tiếp nhận sự kiện; **Lịch sử dữ liệu** để xem và xuất CSV.
 
 Trong **Thiết bị thực**, dữ liệu chưa gửi hoặc đã quá hạn sẽ hiện chờ. Web không điền dữ liệu mô phỏng vào chế độ này.
+
+### Lưu và xem kết quả trên máy chủ
+
+1. Mở **http://localhost:8001/#cloud** hoặc chọn **Máy chủ Supabase** trên thanh bên.
+2. Kiểm tra cấu hình đã điền sẵn, bấm **Lưu cấu hình Supabase** nếu cần.
+3. Nhập email và tự đặt mật khẩu riêng cho CareLink, bấm **Đăng ký tài khoản**, mở email xác nhận rồi quay lại **Đăng nhập**. Người đã có tài khoản ứng dụng đăng nhập bằng tài khoản đó.
+4. Người đầu tiên tạo nhóm. Các thành viên khác đăng ký/xác nhận email trong cùng dự án, sau đó được trưởng nhóm thêm quyền tại **Thêm thành viên đã đăng ký**.
+5. Chọn đúng nhóm và bấm **Lưu 1 bộ mẫu mô phỏng**.
+6. Cuộn xuống **Lịch sử đọc từ Supabase**, chọn nguồn **Mô phỏng** và bấm **Lọc kết quả** để xem ba node. Bấm **Xem** để xem chi tiết, hoặc **Xuất CSV trang này** để tải các dòng đang hiển thị.
+7. Đối chiếu trực tiếp tại **Supabase → Table Editor → carelink_measurements**; bản ghi mô phỏng có `source = demo`, bản ghi từ thiết bị có `source = device`.
+
+Khi thiết lập xác nhận email trong Supabase, đặt **Authentication → URL Configuration → Site URL** theo địa chỉ đang dùng, ví dụ `http://localhost:8001` khi chạy cách trên. Khi dùng web ở địa chỉ khác, cập nhật URL phù hợp trước khi thử đăng ký.
+
+Khi mạch đã gửi số đo qua Gateway, vào **Thiết bị thực**, kết nối Gateway rồi bật **Bắt đầu lưu đo thật**. Đọc [HUONG_DAN_SUPABASE.md](HUONG_DAN_SUPABASE.md) để cấu hình lưu từ Gateway khi đóng trình duyệt. Biểu đồ trực tiếp và lệnh điều khiển vẫn đi qua Gateway; mục Máy chủ Supabase dùng để lưu và đọc lịch sử từ xa.
 
 ## 2. Kiến trúc theo sơ đồ mới
 
@@ -68,7 +87,7 @@ $env:MQTT_PORT="1883"
 
 Thay IP ví dụ bằng IP **broker MQTT thực tế**. Broker là dịch vụ riêng mà ESP32-S3, Node 1 và cầu nối truy cập được; phần mềm không tự cài broker.
 
-Mở **http://localhost:8080** → **Kết nối & cài đặt** → **Thiết bị thực** → nhập `ws://localhost:8080/ws` → **Kết nối Gateway**. Khi dùng cầu nối, mở web ở cổng 8080 để cùng nguồn với WebSocket; không cần giữ máy chủ cổng 8000.
+Mở **http://localhost:8080** → **Kết nối & cài đặt** → **Thiết bị thực** → nhập `ws://localhost:8080/ws` → **Kết nối Gateway**. Khi dùng cầu nối, mở web ở cổng 8080 để cùng nguồn với WebSocket; có thể dừng máy chủ mô phỏng ở cổng 8001.
 
 ### Linux/macOS
 
@@ -112,19 +131,26 @@ Adapter RS485/LoRa Serial cũ vẫn giữ trong `gateway.py` cho dự án trư�
 
 | File/thư mục | Nội dung |
 |---|---|
-| `dist/index.html`, `styles.css`, `app.js` | Giao diện chung |
-| `dist/bed-model.js`, `bed-ui.js` | Dữ liệu và giao diện giường bệnh |
+| `dist/index.html`, `dist/styles.css`, `dist/app.js` | Giao diện chung |
+| `dist/bed-model.js`, `dist/bed-ui.js` | Dữ liệu và giao diện giường bệnh |
+| `dist/cloud-model.js`, `dist/cloud-store.js`, `dist/cloud-ui.js` | Gom kết quả, gửi Supabase, đăng nhập, nhóm và lịch sử |
+| `dist/supabase-config.js` | Project URL và khóa công khai của ứng dụng |
+| `supabase/schema.sql` | Tạo bảng, hàm và phân quyền Supabase |
 | `gateway/gateway.py` | Cầu nối MQTT–WebSocket |
+| `gateway/supabase_sync.py` | Bộ gửi Supabase có hàng chờ khi mạng lỗi |
 | `gateway/requirements.txt` | Thư viện Python |
 | `INTEGRATION_NODE3.md` | Bản tin để bàn giao cho nhóm Gateway |
+| `HUONG_DAN_SUPABASE.md` | Các bước thiết lập, dùng nhóm và lưu dữ liệu |
 | `tests/`, `gateway/test_gateway.py` | Kiểm tra phần mềm |
+| `.gitignore` | Quy tắc bỏ qua môi trường cài đặt, thông tin cục bộ và hàng chờ |
 
 Chỉ cần sửa `dist/` khi làm giao diện. Phông trực tuyến có phông hệ thống dự phòng.
 
-Kiểm tra mô hình giường và luồng lệnh bằng Node.js 18 trở lên, không cần npm install:
+Để chạy toàn bộ kiểm tra JavaScript và SQL, cài Node.js cùng các thư viện kiểm tra:
 
 ```bash
-node --test tests/*.test.cjs
+npm ci --include=dev
+npm test
 ```
 
 Sau khi cài thư viện Python:
